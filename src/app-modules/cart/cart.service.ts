@@ -23,4 +23,8 @@ export class CartService extends BaseService {
     public async removeProductFromOrder(orderId:number,productId:number){
         return this.cartRepository.removeProductFromOrder(orderId,productId);
     }
+
+    public async removeCartItem(orderId:number){
+        return this.cartRepository.removeCartItem(orderId);
+    }
 }

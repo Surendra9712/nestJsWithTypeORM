@@ -7,7 +7,7 @@ import {IsPasswordDifferent} from "@snapSystem/validators/is-password-different.
 export class ResetPasswordDto extends BaseDto{
     @ApiProperty()
     @IsNotEmpty()
-    @IsEmail()
+    @IsEmail({},{message:'username must be a valid email address.'})
     email: string;
 
     @ApiProperty()

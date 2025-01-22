@@ -4,13 +4,13 @@ import {IsNotEmpty, IsNumber} from "class-validator";
 
 export class CreateCartDto extends BaseDto{
     @ApiProperty()
-    @IsNotEmpty()
     @IsNumber()
+    @IsNotEmpty()
     public quantity:number;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsNumber()
+    @IsNotEmpty()
     public productId:number;
 
     public orderBy:number;

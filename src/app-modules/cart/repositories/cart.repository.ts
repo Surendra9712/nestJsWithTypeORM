@@ -85,11 +85,16 @@ export class CartRepository extends BaseRepository<
         await this.findOrFail(orderId).catch(_ => {
             return Promise.reject(new SnapNotFoundException("The order you are looking for was not found."))
         });
-        return await this.productOrderRepository.findOneOrFail({where: {orderId, productId}}).then(async res => {
-            await this.productOrderRepository.remove(res);
-            return Promise.resolve(true);
+        return await this.productOrderRepository.findOneOrFail({where: {orderId, productId}}).then(res => {
+             this.productOrderRepository.remove(res);
+            return true;
         }).catch(_ => {
             return Promise.reject(new SnapNotFoundException('The product you are looking for was not found in your cart.'))
         })
+    }
+
+    public async removeCartItem(id: number): Promise<boolean> {
+        await this.findOrFail(id, {where: {id, status: OrderStatusEnum.InCart}});
+        return this.deleteEntity(id)
     }
 }

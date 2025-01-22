@@ -6,9 +6,10 @@ import { ProductsModule } from './products/products.module';
 import {UploaderModule} from "./uploader/uploader.module";
 import { CategoryModule } from './category/category.module';
 import {CartModule} from "@appModules/cart/cart.module";
+import {OrderModule} from "@appModules/order/order.module";
 
 @Module({
-  imports: [ConfigModule, AuthModule, UserModule, ProductsModule,UploaderModule, CategoryModule,CartModule],
+  imports: [ConfigModule, AuthModule, UserModule, ProductsModule,UploaderModule, CategoryModule,CartModule,OrderModule],
   controllers: [],
   providers: [],
 })

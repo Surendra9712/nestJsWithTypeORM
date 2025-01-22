@@ -12,33 +12,33 @@ import {UserEntity} from "@models/user/user.entity";
 
 export class SignUpDto extends BaseDto {
     @ApiProperty()
-    @IsNotEmpty()
     @IsString()
     @MaxLength(100)
+    @IsNotEmpty()
     firstName: string;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsString()
     @MaxLength(100)
+    @IsNotEmpty()
     lastName: string;
 
     @ApiProperty()
-    @IsNotEmpty()
-    @IsEmail()
+    @IsEmail({},{message:'username must be a valid email address.'})
     @MaxLength(50)
     @IsUnique(UserEntity,'email')
+    @IsNotEmpty()
     email: string;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsStrongPassword({},{message:'password must include at least one uppercase letter, one lowercase letter, one number, and one special character.'})
     @MaxLength(16)
     @MinLength(8)
+    @IsNotEmpty()
     password: string;
 
     @ApiProperty()
-    @IsNotEmpty()
     @Match('password')
+    @IsNotEmpty()
     confirmPassword: string;
 }

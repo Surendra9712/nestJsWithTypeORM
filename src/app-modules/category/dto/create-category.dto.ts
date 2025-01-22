@@ -4,14 +4,14 @@ import {IsNotEmpty, IsString, MaxLength} from "class-validator";
 
 export class CreateCategoryDto extends BaseDto{
     @ApiProperty()
-    @IsNotEmpty()
     @IsString()
     @MaxLength(250)
+    @IsNotEmpty()
     public title: string;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsString()
     @MaxLength(500)
+    @IsNotEmpty()
     public description: string;
 }

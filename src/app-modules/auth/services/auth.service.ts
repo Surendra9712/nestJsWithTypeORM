@@ -15,6 +15,7 @@ import {PasswordResetRepository} from "@appModules/auth/repositories/password-re
 import {ResetPasswordDto} from "@appModules/auth/dto/reset-password.dto";
 import {SnapUnauthorizedException} from "@snapSystem/exceptions/snap-unauthorized.exception";
 import {SignUpDto} from "@appModules/auth/dto/sign-up.dto";
+import {CreateUserDto} from "@appModules/users/dto/create-user.dto";
 
 @Injectable()
 export class AuthService extends BaseService {
@@ -36,20 +37,33 @@ export class AuthService extends BaseService {
             if (!user || !(await verifyHash(pass, user.password))) {
                 return Promise.reject(new InvalidCredentialsException());
             }
-            const payload = {sub: user.id, username: user.email, tokenId: uuid()};
-            const accessToken = await this.jwtService.signAsync(payload);
-            const verifiedToken = await this.jwtService.verifyAsync(accessToken);
-            const entity = {
-                userId: user.id,
-                expiresAt: new Date(verifiedToken.exp * 1000),
-                tokenId: verifiedToken.tokenId
-            };
-            this.authRepository.createEntity(entity).then()
-            return {
-                user,
-                accessToken: await this.jwtService.signAsync(payload),
-            };
+            return this.generateAccessTokenAndSaveTokenInfo(user);
         })
+    }
+
+    async validateUser(userId: number, tokenId: string): Promise<any> {
+        await this.authRepository.verifyToken(tokenId);
+        return this.userRepository.findOrFail(userId);
+    }
+
+   public async googleLogin(user: UserSerializer) {
+        return this.generateAccessTokenAndSaveTokenInfo(user);
+    }
+
+    public async generateAccessTokenAndSaveTokenInfo(user: UserSerializer) {
+        const payload = {sub: user.id, username: user.email, tokenId: uuid()};
+        const accessToken = await this.jwtService.signAsync(payload);
+        const verifiedToken = await this.jwtService.verifyAsync(accessToken);
+        const entity = {
+            userId: user.id,
+            expiresAt: new Date(verifiedToken.exp * 1000),
+            tokenId: verifiedToken.tokenId
+        };
+        this.authRepository.createEntity(entity).then()
+        return {
+            user,
+            accessToken: await this.jwtService.signAsync(payload),
+        };
     }
 
     public async verifyUser(email: string): Promise<boolean> {
@@ -58,12 +72,6 @@ export class AuthService extends BaseService {
 
     public async findUserByEmail(email: string): Promise<UserSerializer> {
         return this.userRepository.findUserByEmail(email);
-    }
-
-    public async verifyToken(token: string): Promise<UserSerializer> {
-        const accessToken = await this.jwtService.verifyAsync(token);
-        await this.authRepository.verifyToken(accessToken.tokenId);
-        return this.userRepository.findOrFail(accessToken.sub);
     }
 
     public async logout(req: Request): Promise<boolean> {
@@ -102,5 +110,11 @@ export class AuthService extends BaseService {
     private async sendVerificationEmail(user: UserSerializer): Promise<void> {
         const url = `${frontAppUrl()}/users/verify?email=${user.email}`
         this.mailService.sendEmail(user, 'Account Verification Link', url, 'user-verify').then();
+    }
+
+    public async validateGoogleUser(googleUser: CreateUserDto) {
+        const user = await this.userRepository.findOne({where: {email: googleUser.email}});
+        if (user) return user;
+        return await this.userRepository.createEntity({...googleUser, isLocked: false});
     }
 }

@@ -32,7 +32,7 @@ export abstract class BaseRepository<
         return Promise.resolve(entity ? this.transform(entity, {}) : null);
       })
       .catch(() => {
-        return Promise.reject(new SnapNotFoundException('Model not found.'));
+        return Promise.reject(new SnapNotFoundException('The item you are looking for was not found.'));
       });
   }
 

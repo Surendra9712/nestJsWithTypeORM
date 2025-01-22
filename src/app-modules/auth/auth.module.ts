@@ -7,7 +7,6 @@ import {UserRepository} from "@appModules/users/repositories/user.repository";
 import {TypeOrmModule} from "@nestjs/typeorm";
 import {UserEntity} from "@models/user/user.entity";
 import {APP_GUARD} from "@nestjs/core";
-import {AuthGuard} from "@appModules/auth/guard/auth.guard";
 import {AuthRepository} from "@appModules/auth/repositories/auth.repository";
 import {AccessTokenEntity} from "@models/auth/access-token.entity";
 import {MailerModule} from "@nestjs-modules/mailer";
@@ -17,6 +16,10 @@ import {PasswordResetRepository} from "@appModules/auth/repositories/password-re
 import {
     IsPasswordDifferentConstraint
 } from "@snapSystem/validators/is-password-different.validator";
+import GoogleOauthConfig from "../../config/google-oauth.config";
+import {GoogleStrategy} from "@appModules/auth/strategies/google.strategy";
+import {JwtStrategy} from "@appModules/auth/strategies/jwt.strategy";
+import {JwtAuthGuard} from "@appModules/auth/guard/auth.guard";
 
 @Module({
     imports: [
@@ -51,10 +54,19 @@ import {
                 },
             })
         }),
+        ConfigModule.forFeature(GoogleOauthConfig)
     ],
     providers: [
-        {provide: APP_GUARD, useClass: AuthGuard},
-        AuthService, AuthRepository, UserRepository, MailService, PasswordResetRepository, IsPasswordDifferentConstraint],
+        AuthService,
+        AuthRepository,
+        UserRepository,
+        MailService,
+        PasswordResetRepository,
+        IsPasswordDifferentConstraint,
+        JwtStrategy,
+        GoogleStrategy,
+        {provide: APP_GUARD, useClass: JwtAuthGuard},
+    ],
     controllers: [AuthController],
     exports: [AuthService]
 })

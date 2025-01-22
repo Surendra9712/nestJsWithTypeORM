@@ -5,46 +5,47 @@ import {PlatformTypeEnum} from "@common/enum/platform-type.enum";
 
 export class CreateProductDto  extends BaseDto{
     @ApiProperty()
-    @IsNotEmpty()
     @IsString()
     @MaxLength(250)
+    @IsNotEmpty()
     public title: string;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsDecimal()
+    @IsNotEmpty()
     public price: number;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsString()
+    @IsNotEmpty()
     public currency: string;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsString()
+    @IsNotEmpty()
     public description: string;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsArray()
+    @IsNotEmpty()
     public tags: Array<string>;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsNumber()
+    @IsNotEmpty()
     public categoryId: number;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsUrl( {
         protocols: ['http', 'https'],
         allow_underscores: true,
+        host_whitelist:['localhost']
     })
+    @IsNotEmpty()
     public thumbnailUrl: string;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsEnum(PlatformTypeEnum)
+    @IsNotEmpty()
     public platformType: PlatformTypeEnum;
 }

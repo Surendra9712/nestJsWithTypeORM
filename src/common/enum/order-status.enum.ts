@@ -1,5 +1,6 @@
 export enum OrderStatusEnum {
-    InCart=0,
-    Pending=1,
-    Completed=2
+    Cancelled=0,
+    InCart=1,
+    Pending=2,
+    Completed=3
 }

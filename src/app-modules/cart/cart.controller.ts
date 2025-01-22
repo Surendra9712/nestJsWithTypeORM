@@ -14,18 +14,18 @@ export class CartController {
 
     @Get()
     public async findAll(@Req() req: Request): Promise<OrderSerializer> {
-        return this.cartService.getCartItems(req['user'].id);
+        return this.cartService.getCartItems(req.user['id']);
     }
 
     @Post()
     public async create(@Body() createCartDto: CreateCartDto, @Req() req: Request): Promise<OrderSerializer> {
-        createCartDto.orderBy = req['user'].id;
+        createCartDto.orderBy = req.user['id'];
         return this.cartService.createOrder(createCartDto);
     }
 
     @Delete(':id')
     public async remove(@Param('id', ParseIdPipe) id: number): Promise<boolean> {
-        return this.cartService.remove(id);
+        return this.cartService.removeCartItem(id);
     }
 
     @Delete(':orderId/product/:productId')

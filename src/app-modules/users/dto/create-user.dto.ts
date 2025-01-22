@@ -13,15 +13,15 @@ import {UserEntity} from "@models/user/user.entity";
 
 export class CreateUserDto extends BaseDto {
     @ApiProperty()
-    @IsNotEmpty()
     @IsString()
     @MaxLength(100)
+    @IsNotEmpty()
     firstName: string;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsString()
     @MaxLength(100)
+    @IsNotEmpty()
     lastName: string;
 
     @ApiProperty()
@@ -31,28 +31,28 @@ export class CreateUserDto extends BaseDto {
     avatar: string;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsEmail()
     @MaxLength(50)
-    @IsUnique(UserEntity,'email')
+    @IsUnique(UserEntity, 'email')
+    @IsNotEmpty()
     email: string;
 
     @ApiProperty()
-    @IsNotEmpty()
-    @IsStrongPassword({},{message:'password must include at least one uppercase letter, one lowercase letter, one number, and one special character.'})
+    @IsStrongPassword({}, {message: 'password must include at least one uppercase letter, one lowercase letter, one number, and one special character.'})
     @MaxLength(16)
     @MinLength(8)
+    @IsNotEmpty()
     password: string;
 
     @ApiProperty()
-    @IsNotEmpty()
     @Match('password')
+    @IsNotEmpty()
     confirmPassword: string;
 
     @ApiProperty()
-    @IsNotEmpty()
     @IsEnum(UserStatusEnum)
     @IsOptional()
+    @IsNotEmpty()
     status: UserStatusEnum;
 
     @ApiProperty()

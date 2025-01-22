@@ -1,18 +1,17 @@
-import {CanActivate, ExecutionContext, Injectable} from '@nestjs/common';
+import {ExecutionContext, Injectable} from '@nestjs/common';
 import {SnapUnauthorizedException} from '@snapSystem/exceptions/snap-unauthorized.exception';
 import {Reflector} from '@nestjs/core';
-import {getTokenFromHeader} from "@helpers/helper-functions";
-import {AuthService} from "@appModules/auth/services/auth.service";
+import {AuthGuard} from "@nestjs/passport";
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class JwtAuthGuard extends AuthGuard('jwt') {
     public constructor(
-        private authService: AuthService,
         private reflector: Reflector,
     ) {
+        super();
     }
 
-    async canActivate(context: ExecutionContext): Promise<boolean> {
+    canActivate(context: ExecutionContext) {
         const isPublic = this.reflector.getAllAndOverride<boolean>(
             'isPublic',
             [context.getHandler(), context.getClass()],
@@ -20,16 +19,13 @@ export class AuthGuard implements CanActivate {
         if (isPublic) {
             return true;
         }
-        const request = context.switchToHttp().getRequest();
-        const authToken: string | undefined = getTokenFromHeader(request);
-        if (!authToken) {
+        return super.canActivate(context);
+    }
+
+    handleRequest(err, user, info) {
+        if (err || !user) {
             throw new SnapUnauthorizedException();
         }
-        try {
-            request.user = await this.authService.verifyToken(authToken);
-        } catch {
-            throw new SnapUnauthorizedException('Token has been expired.');
-        }
-        return true;
+        return user;
     }
 }

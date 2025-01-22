@@ -3,7 +3,7 @@ import {IsEmail, IsNotEmpty} from "class-validator";
 
 export class UserVerifyDto {
     @ApiProperty()
+    @IsEmail({},{message:'username must be a valid email address.'})
     @IsNotEmpty()
-    @IsEmail()
     email: string;
 }
